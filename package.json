@@ -1,7 +1,7 @@
 {
   "name": "nitron",
   "version": "1.0.0",
-  "description": "Fast, clean browser — no cold-start",
+  "description": "Fast, clean browser",
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",

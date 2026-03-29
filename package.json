@@ -1,0 +1,22 @@
+{
+  "name": "nitron",
+  "version": "2.0.0",
+  "description": "Fast, clean browser — no cold-start",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "electron": "^28.0.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.nitron.browser",
+    "productName": "Nitron",
+    "compression": "maximum",
+    "files": ["src/**/*", "!src/engine/**"]
+  }
+}

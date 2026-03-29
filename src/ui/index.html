@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; media-src *; frame-src *; connect-src *;">
+  <title>Nitron</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TITLEBAR -->
+<div class="titlebar" id="titlebar">
+  <div class="titlebar-drag"></div>
+  <div class="titlebar-center">
+    <div class="brand-logo">N</div>
+    <span class="brand-name">Nitron</span>
+  </div>
+  <div class="win-controls">
+    <button class="win-btn" onclick="window.nitron.minimize()" title="Minimize">
+      <svg viewBox="0 0 12 12"><line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+    <button class="win-btn" id="btn-maximize" onclick="window.nitron.maximize()" title="Maximize">
+      <svg viewBox="0 0 12 12"><rect x="1" y="1" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+    </button>
+    <button class="win-btn win-close" onclick="window.nitron.close()" title="Close">
+      <svg viewBox="0 0 12 12"><path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- TABBAR -->
+<div class="tabbar">
+  <div id="tabs"></div>
+  <button class="new-tab-btn" onclick="newTab()" title="New tab (Ctrl+T)">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <button class="nav-btn" onclick="goBack()" title="Back (Alt+Left)">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="nav-btn" onclick="goForward()" title="Forward (Alt+Right)">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="nav-btn" onclick="refreshPage()" title="Refresh (Ctrl+R)">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M13.5 2.5v4h-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 8a5.5 5.5 0 009.3-3.8l1.7-1.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="nav-btn" onclick="goHome()" title="New tab">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M2 7l6-5 6 5v7a1 1 0 01-1 1H3a1 1 0 01-1-1V7z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <div class="urlbar-wrap" id="urlbar-wrap">
+    <span class="secure-icon" id="secure-icon"></span>
+    <input id="urlbar" type="text" placeholder="Search or enter address"
+      onkeydown="handleUrlKey(event)"
+      onfocus="this.select()"
+      spellcheck="false"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+    />
+  </div>
+
+  <button class="nav-btn" id="btn-bookmark" onclick="toggleBookmark()" title="Bookmark">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M3 2h10v12l-5-3-5 3V2z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="nav-btn" id="btn-menu" onclick="toggleMenu()" title="Menu">
+    <svg viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="3.5" r="1" fill="currentColor"/>
+      <circle cx="8" cy="8" r="1" fill="currentColor"/>
+      <circle cx="8" cy="12.5" r="1" fill="currentColor"/>
+    </svg>
+  </button>
+</div>
+
+<!-- BROWSER CONTENT -->
+<div class="browser-content">
+
+  <div class="newtab-page" id="newtab-page">
+    <div class="newtab-inner">
+      <div class="newtab-logo">N</div>
+      <h1 class="newtab-title">Nitron</h1>
+      <p class="newtab-sub">Fast. Clean. Yours.</p>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 16 16" fill="none">
+          <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M10 10l3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <input id="newtab-search" type="text" placeholder="Search or enter website"
+          onkeydown="handleNewtabKey(event)" autocomplete="off" spellcheck="false"/>
+        <button class="search-go" onclick="newtabNavigate()">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="quick-links">
+        <div class="quick-link" onclick="loadUrl('https://google.com')">
+          <div class="ql-icon ql-g">G</div><span>Google</span>
+        </div>
+        <div class="quick-link" onclick="loadUrl('https://github.com')">
+          <div class="ql-icon ql-gh">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.09.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.46-1.19-1.12-1.5-1.12-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.93.86.09-.67.35-1.12.64-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.26 10.26 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"/></svg>
+          </div><span>GitHub</span>
+        </div>
+        <div class="quick-link" onclick="loadUrl('https://youtube.com')">
+          <div class="ql-icon ql-yt">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.6-.9-2-.9C16.4 5 12 5 12 5s-4.4 0-7 .1c-.4 0-1.2.1-2 .9-.6.6-.8 2-.8 2S2 9.6 2 11.2v1.5c0 1.6.2 3.2.2 3.2s.2 1.4.8 2c.8.8 1.8.8 2.2.8C6.8 19 12 19 12 19s4.4 0 7-.1c.4 0 1.2-.1 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.2v-1.5C22 9.6 21.8 8 21.8 8zM9.7 14.5V9.4l5.4 2.6-5.4 2.5z"/></svg>
+          </div><span>YouTube</span>
+        </div>
+        <div class="quick-link" onclick="loadUrl('https://reddit.com')">
+          <div class="ql-icon ql-r">r/</div><span>Reddit</span>
+        </div>
+        <div class="quick-link" onclick="loadUrl('https://x.com')">
+          <div class="ql-icon ql-x">X</div><span>X</span>
+        </div>
+        <div class="quick-link" onclick="loadUrl('https://claude.ai')">
+          <div class="ql-icon ql-ai">AI</div><span>Claude</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-webview container: each tab injects its own <webview> here -->
+  <div id="webview-container" style="display:contents"></div>
+
+  <!-- Top loading progress bar (replaces old overlay) -->
+  <div id="loading-bar"></div>
+
+  <div class="error-page" id="error-page" style="display:none">
+    <div class="error-inner">
+      <svg class="error-icon" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+        <path d="M24 16v10M24 32h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h2>Can't reach this page</h2>
+      <p id="error-msg">Check the URL and try again.</p>
+      <div class="error-actions">
+        <button onclick="refreshPage()">Try Again</button>
+        <button class="btn-secondary" onclick="goHome()">Go Home</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MENU DROPDOWN -->
+<div class="menu-dropdown" id="menu-dropdown">
+  <div class="menu-section">
+    <div class="menu-item" onclick="newTab()">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
+      <span>New Tab</span>
+      <span class="mi-kbd">Ctrl+T</span>
+    </div>
+    <div class="menu-item" onclick="showHistory()">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.1"/><path d="M7 4v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></span>
+      <span>History</span>
+      <span class="mi-kbd">Ctrl+H</span>
+    </div>
+    <div class="menu-item" onclick="showBookmarks()">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M2.5 2h9v10.5L7 9l-4.5 3.5V2z" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span>Bookmarks</span>
+    </div>
+  </div>
+  <div class="menu-sep"></div>
+  <div class="menu-section">
+    <div class="menu-item zoom-row">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.1"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+      <span>Zoom</span>
+      <div class="zoom-controls">
+        <button onclick="zoomOut()">−</button>
+        <button onclick="zoomReset()">100%</button>
+        <button onclick="zoomIn()">+</button>
+      </div>
+    </div>
+    <div class="menu-item" onclick="toggleDarkMode()">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2a5 5 0 000 10A5 5 0 007 2z" stroke="currentColor" stroke-width="1.1"/></svg></span>
+      <span>Toggle Theme</span>
+    </div>
+  </div>
+  <div class="menu-sep"></div>
+  <div class="menu-section">
+    <div class="menu-item" onclick="toggleDevTools()">
+      <span class="mi-icon"><svg viewBox="0 0 14 14" fill="none"><path d="M4 4L2 7l2 3M10 4l2 3-2 3M7 3l-1 8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span>Developer Tools</span>
+      <span class="mi-kbd">F12</span>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
